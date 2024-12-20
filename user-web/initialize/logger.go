@@ -6,7 +6,7 @@ import (
 )
 
 func Logger() {
-	logger, _ := zap.NewProduction()
+	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
 	sugar := logger.Sugar()
 

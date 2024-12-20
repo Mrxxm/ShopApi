@@ -9,7 +9,7 @@ import (
 func InitUserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user")
 
-	global.GetSugar().Infof("初始化用户相关url")
+	global.GetSugar().Debug("初始化用户相关url")
 	{
 		UserRouter.GET("list", api.GetUserList)
 	}
