@@ -29,9 +29,10 @@ func InitConfig() {
 	if err := vip.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("无法读取配置文件: %s", err))
 	}
+	fmt.Println(vip.AllSettings(), vip.AllKeys())
 
 	// 解析配置文件内容到结构体
-	if err := vip.Unmarshal(global.ServerConfig); err != nil {
+	if err := vip.Unmarshal(&global.ServerConfig); err != nil {
 		global.GetSugar().Errorf("无法解析配置文件内容: %v", err)
 		panic(err)
 	}
