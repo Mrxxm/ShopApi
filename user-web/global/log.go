@@ -17,3 +17,10 @@ func GetSugar() *zap.SugaredLogger {
 
 	return Sugar
 }
+
+func SetSugar(newSugar *zap.SugaredLogger) {
+	mutex.Lock()         // 获取写锁
+	defer mutex.Unlock() // 确保释放锁
+
+	Sugar = newSugar
+}

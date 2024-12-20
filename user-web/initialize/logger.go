@@ -8,5 +8,7 @@ import (
 func Logger() {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
-	global.Sugar = logger.Sugar()
+	sugar := logger.Sugar()
+
+	global.SetSugar(sugar)
 }
