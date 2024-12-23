@@ -157,10 +157,14 @@ func PasswordLogin(ctx *gin.Context) {
 	// 5.返回数据
 	j := middlewares.NewJWT()
 	claims := models.CustomClaims{
-		ID:             uint(UserInfoResponse.Id),
-		NickName:       UserInfoResponse.Nickname,
-		AuthorityId:    uint(UserInfoResponse.Role),
-		StandardClaims: jwt.StandardClaims{},
+		ID:          uint(UserInfoResponse.Id),
+		NickName:    UserInfoResponse.Nickname,
+		AuthorityId: uint(UserInfoResponse.Role),
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),            // 签名生效时间
+			ExpiresAt: time.Now().Unix() + 60*60*24, // 过期时间 一天
+			Issuer:    "xxm",                        //签名的发行者
+		},
 	}
 	token, err := j.CreateToken(claims)
 	if err != nil {
