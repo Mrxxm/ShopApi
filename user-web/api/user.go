@@ -4,15 +4,31 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
+	"shop_api/user-web/forms"
 	"shop_api/user-web/global"
 	"shop_api/user-web/global/response"
 	"shop_api/user-web/proto"
+	"strconv"
 	"time"
 )
+
+func HandleValidatorError(ctx *gin.Context, err error) {
+	errs, ok := err.(validator.ValidationErrors)
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	ctx.JSON(http.StatusBadRequest, gin.H{
+		"msg": errs.Translate(global.Trans),
+	})
+}
 
 func HandleGrpcErrorToHttp(err error, ctx *gin.Context) {
 	if err != nil {
@@ -47,7 +63,16 @@ func GetUserList(ctx *gin.Context) {
 
 	// 2.生成grpc的client并调用接口
 	userSrvClient := proto.NewUserClient(connect)
-	UserListResponse, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{Page: 1, PageSize: 5})
+	page := ctx.DefaultQuery("page", "1")
+	pageInt, _ := strconv.Atoi(page)
+	pageSize := ctx.DefaultQuery("page_size", "5")
+	pageSizeInt, _ := strconv.Atoi(pageSize)
+	UserListResponse, err := userSrvClient.GetUserList(
+		context.Background(),
+		&proto.PageInfo{
+			Page:     uint32(pageInt),
+			PageSize: uint32(pageSizeInt),
+		})
 	if err != nil {
 		global.GetSugar().Errorw("[GetUserList] 调用 [user_srv] GetUserList 失败", "msg", err.Error())
 		HandleGrpcErrorToHttp(err, ctx)
@@ -85,5 +110,19 @@ func GetUserList(ctx *gin.Context) {
 		"total":    UserListResponse.Total,
 		"page":     1,
 		"pageSize": 5,
+	})
+}
+
+func PasswordLogin(ctx *gin.Context) {
+	// 表单验证
+	passwordLoginForm := forms.PasswordLoginForm{}
+
+	if err := ctx.ShouldBind(&passwordLoginForm); err != nil {
+		HandleValidatorError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "登录成功",
 	})
 }

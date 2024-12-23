@@ -12,6 +12,7 @@ func InitUserRouter(Router *gin.RouterGroup) {
 	global.GetSugar().Debug("初始化用户相关url")
 	{
 		UserRouter.GET("list", api.GetUserList)
+		UserRouter.POST("password_login", api.PasswordLogin)
 	}
 
 }
