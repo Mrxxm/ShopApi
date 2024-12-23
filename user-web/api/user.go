@@ -50,7 +50,7 @@ func HandleGrpcErrorToHttp(err error, ctx *gin.Context) {
 }
 
 func GetUserList(ctx *gin.Context) {
-	global.Sugar.Debug("获取用户列表页")
+	global.Sugar.Debug("获取用户列表页接口")
 
 	// 1.拨号连接grpc服务
 	ip := "127.0.0.1"
@@ -114,11 +114,44 @@ func GetUserList(ctx *gin.Context) {
 }
 
 func PasswordLogin(ctx *gin.Context) {
-	// 表单验证
+	global.Sugar.Debug("登录接口")
+	// 1.表单验证
 	passwordLoginForm := forms.PasswordLoginForm{}
-
 	if err := ctx.ShouldBind(&passwordLoginForm); err != nil {
 		HandleValidatorError(ctx, err)
+		return
+	}
+
+	// 2.拨号连接grpc服务
+	ip := "127.0.0.1"
+	port := 50051
+	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
+	if err != nil {
+		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
+	}
+	defer connect.Close()
+
+	// 3.生成grpc的client并调用接口
+	userSrvClient := proto.NewUserClient(connect)
+	UserInfoResponse, err := userSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
+		Mobile: passwordLoginForm.Mobile,
+	})
+	if err != nil {
+		HandleGrpcErrorToHttp(err, ctx)
+		return
+	}
+
+	// 4.验证密码是否正确
+	CheckResponse, err := userSrvClient.CheckPassword(ctx, &proto.PasswordCheckInfo{
+		Password:          passwordLoginForm.Password,
+		EncryptedPassword: UserInfoResponse.Password,
+	})
+	if err != nil {
+		HandleGrpcErrorToHttp(err, ctx)
+		return
+	}
+	if !CheckResponse.Success {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"msg": "密码错误"})
 		return
 	}
 
