@@ -37,7 +37,9 @@ func GetUserList(ctx *gin.Context) {
 	global.Sugar.Debug("获取用户列表页")
 
 	// 1.拨号连接grpc服务
-	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
+	ip := "127.0.0.1"
+	port := 50051
+	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
 	if err != nil {
 		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
 	}
