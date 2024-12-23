@@ -14,7 +14,9 @@ func InitUserRouter(Router *gin.RouterGroup) {
 
 	global.GetSugar().Debug("初始化用户相关url")
 	{
-		UserRouter.Use(middlewares.JWTAuth()).GET("list", api.GetUserList)
+		UserRouter.Use(middlewares.JWTAuth(), middlewares.IsAdminAuth())
+
+		UserRouter.GET("list", api.GetUserList)
 	}
 
 }

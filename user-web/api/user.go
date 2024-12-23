@@ -55,6 +55,10 @@ func HandleGrpcErrorToHttp(err error, ctx *gin.Context) {
 func GetUserList(ctx *gin.Context) {
 	global.Sugar.Debug("获取用户列表页接口")
 
+	claims, _ := ctx.Get("claims")
+	userId := claims.(*models.CustomClaims).ID
+	global.Sugar.Debug("用户id:", userId)
+
 	// 1.拨号连接grpc服务
 	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
 	if err != nil {
