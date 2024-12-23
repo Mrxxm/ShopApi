@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"reflect"
 	"shop_api/user-web/global"
 )
 
@@ -29,12 +30,35 @@ func InitConfig() {
 	if err := vip.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("无法读取配置文件: %s", err))
 	}
-	fmt.Println(vip.AllSettings(), vip.AllKeys())
+	settings := vip.AllSettings()
+	fmt.Println(settings, vip.AllKeys())
 
 	// 解析配置文件内容到结构体
 	if err := vip.Unmarshal(&global.ServerConfig); err != nil {
 		global.GetSugar().Errorf("无法解析配置文件内容: %v", err)
 		panic(err)
+	}
+
+	// 打印解析后的内容
+	global.GetSugar().Infof("配置文件内容：%+v", *global.ServerConfig)
+
+	// 自主赋值
+	userSrv := settings["user_srv"]
+	fmt.Println(reflect.TypeOf(userSrv))
+	// 用户服务配置
+	if srv, ok := userSrv.(map[string]interface{}); ok {
+		if host, ok := srv["host"].(string); ok {
+			global.ServerConfig.UserSrvConfig.Host = host
+		}
+		if port, ok := srv["port"].(int); ok {
+			global.ServerConfig.UserSrvConfig.Port = port
+		}
+	}
+	// JWT配置
+	if jwt, ok := settings["jwt"].(map[string]interface{}); ok {
+		if signingKey, ok := jwt["signing_key"].(string); ok {
+			global.ServerConfig.JWTConfig.SigningKey = signingKey
+		}
 	}
 
 	// 打印解析后的内容

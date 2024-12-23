@@ -6,7 +6,12 @@ type UserSrvConfig struct {
 }
 
 type ServerConfig struct {
+	UserSrvConfig UserSrvConfig `mapsstructure:"user_srv"`
+	JWTConfig     JWTConfig     `mapsstructure:"jwt"`
 	Name          string        `mapsstructure:"name"`
 	Port          int           `mapsstructure:"port"`
-	UserSrvConfig UserSrvConfig `mapsstructure:"user_srv"`
+}
+
+type JWTConfig struct {
+	SigningKey string `mapsstructure:"signing_key"`
 }

@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc"
@@ -12,6 +13,8 @@ import (
 	"shop_api/user-web/forms"
 	"shop_api/user-web/global"
 	"shop_api/user-web/global/response"
+	"shop_api/user-web/middlewares"
+	"shop_api/user-web/models"
 	"shop_api/user-web/proto"
 	"strconv"
 	"time"
@@ -53,9 +56,7 @@ func GetUserList(ctx *gin.Context) {
 	global.Sugar.Debug("获取用户列表页接口")
 
 	// 1.拨号连接grpc服务
-	ip := "127.0.0.1"
-	port := 50051
-	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
+	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
 	if err != nil {
 		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
 	}
@@ -123,9 +124,7 @@ func PasswordLogin(ctx *gin.Context) {
 	}
 
 	// 2.拨号连接grpc服务
-	ip := "127.0.0.1"
-	port := 50051
-	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
+	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
 	if err != nil {
 		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
 	}
@@ -155,7 +154,24 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 
+	// 5.返回数据
+	j := middlewares.NewJWT()
+	claims := models.CustomClaims{
+		ID:             uint(UserInfoResponse.Id),
+		NickName:       UserInfoResponse.Nickname,
+		AuthorityId:    uint(UserInfoResponse.Role),
+		StandardClaims: jwt.StandardClaims{},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"msg": "内部错误"})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "登录成功",
+		"data": gin.H{
+			"token": token,
+		},
 	})
 }
