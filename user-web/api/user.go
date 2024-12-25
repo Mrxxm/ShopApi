@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -186,6 +187,52 @@ func PasswordLogin(ctx *gin.Context) {
 		"msg": "登录成功",
 		"data": gin.H{
 			"token": token,
+		},
+	})
+}
+
+func Register(ctx *gin.Context) {
+	// 1.表单验证
+	registerForm := forms.RegisterForm{}
+	if err := ctx.ShouldBind(&registerForm); err != nil {
+		HandleValidatorError(ctx, err)
+		return
+	}
+
+	// 2.验证码校验
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "127.0.0.1:6379",
+	})
+
+	redisValue := rdb.Get(context.Background(), registerForm.Mobile).Val()
+	if redisValue != registerForm.Code {
+		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "验证码错误"})
+		return
+	}
+
+	// 3.用户注册
+	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
+	if err != nil {
+		global.GetSugar().Errorw("[Register] 连接 [user_srv] 失败", "msg", err.Error())
+	}
+	defer connect.Close()
+
+	// 4.生成grpc的client并调用接口
+	userSrvClient := proto.NewUserClient(connect)
+	UserInfoResponse, err := userSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
+		Mobile:   registerForm.Mobile,
+		Nickname: "",
+		Password: registerForm.Password,
+	})
+	if err != nil {
+		HandleGrpcErrorToHttp(err, ctx)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "注册成功",
+		"data": gin.H{
+			"user_id": UserInfoResponse.Id,
 		},
 	})
 }

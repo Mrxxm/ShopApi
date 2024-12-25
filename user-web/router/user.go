@@ -10,6 +10,7 @@ import (
 func InitUserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user")
 
+	UserRouter.POST("register", api.Register)
 	UserRouter.POST("password_login", api.PasswordLogin)
 
 	global.GetSugar().Debug("初始化用户相关url")
