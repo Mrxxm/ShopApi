@@ -10,7 +10,7 @@ func InitBaseRouter(Router *gin.RouterGroup) {
 	BaseRouter := Router.Group("base")
 	{
 		BaseRouter.GET("captcha", api.GetCaptcha)
-		//BaseRouter.POST("register", api.Register)
+		BaseRouter.POST("send_sms", api.SendSms)
 		//BaseRouter.POST("login", api.Login)
 	}
 	global.GetSugar().Debug("初始化基础路由")
