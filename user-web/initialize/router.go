@@ -13,7 +13,8 @@ func Routers() *gin.Engine {
 	r.Use(middlewares.Cors())
 	// 3.调用Group创建路由分组
 	ApiV1Group := r.Group("/u/v1")
-	// 4.初始化用户路由信息
+	// 4.初始化路由信息
+	router.InitBaseRouter(ApiV1Group)
 	router.InitUserRouter(ApiV1Group)
 	// 5.返回路由
 	return r

@@ -127,14 +127,20 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 
-	// 2.拨号连接grpc服务
+	// 2.验证码验证
+	if !store.Verify(passwordLoginForm.CaptchaId, passwordLoginForm.Captcha, true) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "验证码错误"})
+		return
+	}
+
+	// 3.拨号连接grpc服务
 	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
 	if err != nil {
 		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
 	}
 	defer connect.Close()
 
-	// 3.生成grpc的client并调用接口
+	// 4.生成grpc的client并调用接口
 	userSrvClient := proto.NewUserClient(connect)
 	UserInfoResponse, err := userSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
 		Mobile: passwordLoginForm.Mobile,
@@ -144,7 +150,7 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 
-	// 4.验证密码是否正确
+	// 5.验证密码是否正确
 	CheckResponse, err := userSrvClient.CheckPassword(ctx, &proto.PasswordCheckInfo{
 		Password:          passwordLoginForm.Password,
 		EncryptedPassword: UserInfoResponse.Password,
@@ -158,7 +164,7 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 
-	// 5.返回数据
+	// 6.返回数据
 	j := middlewares.NewJWT()
 	claims := models.CustomClaims{
 		ID:          uint(UserInfoResponse.Id),
