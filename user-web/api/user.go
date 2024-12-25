@@ -204,8 +204,12 @@ func Register(ctx *gin.Context) {
 		Addr: "127.0.0.1:6379",
 	})
 
-	redisValue := rdb.Get(context.Background(), registerForm.Mobile).Val()
-	if redisValue != registerForm.Code {
+	value, err := rdb.Get(context.Background(), registerForm.Mobile).Result()
+	if err == redis.Nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "未获取到验证码"})
+		return
+	}
+	if value != registerForm.Code {
 		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "验证码错误"})
 		return
 	}
@@ -221,7 +225,7 @@ func Register(ctx *gin.Context) {
 	userSrvClient := proto.NewUserClient(connect)
 	UserInfoResponse, err := userSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
 		Mobile:   registerForm.Mobile,
-		Nickname: "",
+		Nickname: registerForm.Mobile,
 		Password: registerForm.Password,
 	})
 	if err != nil {
@@ -229,10 +233,28 @@ func Register(ctx *gin.Context) {
 		return
 	}
 
+	// 5.返回数据
+	j := middlewares.NewJWT()
+	claims := models.CustomClaims{
+		ID:          uint(UserInfoResponse.Id),
+		NickName:    UserInfoResponse.Nickname,
+		AuthorityId: uint(UserInfoResponse.Role),
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),            // 签名生效时间
+			ExpiresAt: time.Now().Unix() + 60*60*24, // 过期时间 一天
+			Issuer:    "xxm",                        //签名的发行者
+		},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"msg": "内部错误"})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "注册成功",
+		"msg": "登录成功",
 		"data": gin.H{
-			"user_id": UserInfoResponse.Id,
+			"token": token,
 		},
 	})
 }
