@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"shop_api/user-web/middlewares"
 	"shop_api/user-web/router"
 )
@@ -11,11 +12,15 @@ func Routers() *gin.Engine {
 	r := gin.Default()
 	// 2.使用中间件，解决跨域问题
 	r.Use(middlewares.Cors())
-	// 3.调用Group创建路由分组
+	// 3.健康检测
+	r.GET("health", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{})
+	})
+	// 4.调用Group创建路由分组
 	ApiV1Group := r.Group("/u/v1")
-	// 4.初始化路由信息
+	// 5.初始化路由信息
 	router.InitBaseRouter(ApiV1Group)
 	router.InitUserRouter(ApiV1Group)
-	// 5.返回路由
+	// 6.返回路由
 	return r
 }
