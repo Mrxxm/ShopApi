@@ -1,17 +1,17 @@
 package config
 
 type UserSrvConfig struct {
-	Host string `mapsstructure:"host"`
-	Port int    `mapsstructure:"port"`
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
 }
 
 type ServerConfig struct {
-	UserSrvConfig UserSrvConfig `mapsstructure:"user_srv"`
-	JWTConfig     JWTConfig     `mapsstructure:"jwt"`
-	Name          string        `mapsstructure:"name"`
-	Port          int           `mapsstructure:"port"`
+	UserSrvConfig UserSrvConfig `mapstructure:"user_srv"`
+	JWTConfig     JWTConfig     `mapstructure:"jwt"`
+	Name          string        `mapstructure:"name"`
+	Port          int           `mapstructure:"port"`
 }
 
 type JWTConfig struct {
-	SigningKey string `mapsstructure:"signing_key"`
+	SigningKey string `mapstructure:"signing_key"`
 }
