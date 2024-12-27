@@ -29,8 +29,6 @@ func InitConfig() {
 	if err := vip.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("无法读取配置文件: %s", err))
 	}
-	settings := vip.AllSettings()
-	fmt.Println(settings, vip.AllKeys())
 
 	// 解析配置文件内容到结构体
 	if err := vip.Unmarshal(&global.ServerConfig); err != nil {
