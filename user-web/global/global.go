@@ -6,6 +6,6 @@ import (
 )
 
 var (
-	ServerConfig *config.ServerConfig // 配置文件结构体
-	Trans        ut.Translator        // 定义一个全局翻译器T
+	ServerConfig config.ServerConfig // 配置文件结构体
+	Trans        ut.Translator       // 定义一个全局翻译器T
 )

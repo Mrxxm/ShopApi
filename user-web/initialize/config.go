@@ -39,7 +39,7 @@ func InitConfig() {
 	}
 
 	// 打印解析后的内容
-	global.GetSugar().Infof("配置文件内容：%+v", *global.ServerConfig)
+	global.GetSugar().Infof("配置文件内容：%+v", global.ServerConfig)
 
 	// 配置文件动态监控功能
 	vip.WatchConfig() // 开始监控配置文件变化
@@ -55,6 +55,6 @@ func InitConfig() {
 			global.GetSugar().Errorf("无法解析配置文件内容: %v", err)
 			return
 		}
-		global.GetSugar().Infof("配置文件变化后的内容：%+v", *global.ServerConfig)
+		global.GetSugar().Infof("配置文件变化后的内容：%+v", global.ServerConfig)
 	})
 }
