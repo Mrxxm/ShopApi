@@ -44,6 +44,7 @@ func InitSrvConn() {
 	//defer connect.Close()
 	// 问题：1.后续用户服务下线 2.改端口 3.改ip - 负载均衡来处理
 	// 5.初始化全局变量(已经实现创立好了连接，这样后续就不用再进行TCP三次握手)
+	// 问题：一个连接多个goroutine共用，性能会有影响 - 连接池
 	userSrvClient := proto.NewUserClient(connect)
 	global.UserSrvClient = userSrvClient
 }
