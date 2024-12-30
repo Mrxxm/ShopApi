@@ -25,8 +25,10 @@ func main() {
 		global.GetSugar().Panic("启动翻译器失败:", err.Error())
 		return
 	}
+	// 5.初始化srv的链接
+	initialize.InitSrvConn()
 
-	// 5.注册验证器
+	// 6.注册验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		_ = v.RegisterValidation("mobile", myvalidator.ValidateMobile)
 		_ = v.RegisterTranslation("mobile", global.Trans, func(ut ut.Translator) error {
@@ -37,7 +39,7 @@ func main() {
 		})
 	}
 
-	// 6.启动服务
+	// 7.启动服务
 	if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil {
 		global.GetSugar().Panic("启动服务器失败:", err.Error())
 	}

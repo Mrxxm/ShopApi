@@ -1,9 +1,14 @@
-user_srv:
-  host: '127.0.0.1'
-  port: 50051
-
 name: 'user-web'
 port: 8022
 
+user_srv:
+  host: '192.168.15.21'
+  port: 50051
+  name: 'user-srv'
+
 jwt:
   signing_key: '*n*cxZhL07yss&TphhCg'
+
+consul:
+  host: '192.168.15.21'
+  port: 8500

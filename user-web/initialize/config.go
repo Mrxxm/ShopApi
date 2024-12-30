@@ -27,7 +27,7 @@ func InitConfig() {
 	// 设置配置文件路径
 	vip.SetConfigFile(configFileName)
 	if err := vip.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("无法读取配置文件: %s", err))
+		panic(fmt.Errorf("无法读取配置文件: %s", err.Error()))
 	}
 
 	// 解析配置文件内容到结构体

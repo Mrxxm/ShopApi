@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/redis/go-redis/v9"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
@@ -56,19 +55,45 @@ func HandleGrpcErrorToHttp(err error, ctx *gin.Context) {
 func GetUserList(ctx *gin.Context) {
 	global.Sugar.Debug("获取用户列表页接口")
 
+	// 服务发现-1.初始化配置
+	//userSrvHost := ""
+	//userSrvPort := 0
+	//cfg := api.DefaultConfig()
+	//cfg.Address = fmt.Sprintf("%s:%d", global.ServerConfig.ConsulConfig.Host, global.ServerConfig.ConsulConfig.Port)
+	//
+	//// 服务发现-2.创建一个consul客户端
+	//client, err := api.NewClient(cfg)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//// 服务发现-3.获取所有服务
+	//data, err := client.Agent().ServicesWithFilter(fmt.Sprintf("Service == \"%s\"", global.ServerConfig.UserSrvConfig.Name))
+	//if err != nil {
+	//	panic(err)
+	//}
+	//for key, value := range data {
+	//	userSrvHost = value.Address
+	//	userSrvPort = value.Port
+	//	fmt.Println(key)
+	//	fmt.Println(userSrvHost)
+	//	fmt.Println(userSrvPort)
+	//	break
+	//}
+
+	// 1.拨号连接grpc服务
+	//connect, err := grpc.Dial(fmt.Sprintf("%s:%d", userSrvHost, userSrvPort), grpc.WithInsecure())
+	//if err != nil {
+	//	global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
+	//}
+	//defer connect.Close()
+
 	claims, _ := ctx.Get("claims")
 	userId := claims.(*models.CustomClaims).ID
 	global.Sugar.Debug("用户id:", userId)
 
-	// 1.拨号连接grpc服务
-	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
-	if err != nil {
-		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
-	}
-	defer connect.Close()
-
 	// 2.生成grpc的client并调用接口
-	userSrvClient := proto.NewUserClient(connect)
+	//userSrvClient := proto.NewUserClient(connect)
+	userSrvClient := global.UserSrvClient
 	page := ctx.DefaultQuery("page", "1")
 	pageInt, _ := strconv.Atoi(page)
 	pageSize := ctx.DefaultQuery("page_size", "5")
@@ -135,14 +160,14 @@ func PasswordLogin(ctx *gin.Context) {
 	}
 
 	// 3.拨号连接grpc服务
-	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
-	if err != nil {
-		global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
-	}
-	defer connect.Close()
+	//connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
+	//if err != nil {
+	//	global.GetSugar().Errorw("[GetUserList] 连接 [user_srv] 失败", "msg", err.Error())
+	//}
+	//defer connect.Close()
 
 	// 4.生成grpc的client并调用接口
-	userSrvClient := proto.NewUserClient(connect)
+	userSrvClient := global.UserSrvClient
 	UserInfoResponse, err := userSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
 		Mobile: passwordLoginForm.Mobile,
 	})
@@ -214,15 +239,8 @@ func Register(ctx *gin.Context) {
 		return
 	}
 
-	// 3.用户注册
-	connect, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvConfig.Host, global.ServerConfig.UserSrvConfig.Port), grpc.WithInsecure())
-	if err != nil {
-		global.GetSugar().Errorw("[Register] 连接 [user_srv] 失败", "msg", err.Error())
-	}
-	defer connect.Close()
-
-	// 4.生成grpc的client并调用接口
-	userSrvClient := proto.NewUserClient(connect)
+	// 3.生成grpc的client并调用接口
+	userSrvClient := global.UserSrvClient
 	UserInfoResponse, err := userSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
 		Mobile:   registerForm.Mobile,
 		Nickname: registerForm.Mobile,
@@ -233,7 +251,7 @@ func Register(ctx *gin.Context) {
 		return
 	}
 
-	// 5.返回数据
+	// 4.返回数据
 	j := middlewares.NewJWT()
 	claims := models.CustomClaims{
 		ID:          uint(UserInfoResponse.Id),
