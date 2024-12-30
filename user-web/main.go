@@ -5,8 +5,10 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
 	"shop_api/user-web/global"
 	"shop_api/user-web/initialize"
+	"shop_api/user-web/utils"
 	myvalidator "shop_api/user-web/validator"
 )
 
@@ -27,6 +29,16 @@ func main() {
 	}
 	// 5.初始化srv的链接
 	initialize.InitSrvConn()
+
+	// 本地开发环境端口号固定，线上环境启动获取端口号
+	viper.AutomaticEnv()
+	debug := viper.GetString("SHOP")
+	if debug != "debug" {
+		port, err := utils.GetFreePort()
+		if err == nil {
+			global.ServerConfig.Port = port
+		}
+	}
 
 	// 6.注册验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
