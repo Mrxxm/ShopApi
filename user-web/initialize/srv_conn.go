@@ -3,12 +3,26 @@ package initialize
 import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	_ "github.com/mbobakov/grpc-consul-resolver" // It's important
 	"google.golang.org/grpc"
 	"shop_api/user-web/global"
 	"shop_api/user-web/proto"
 )
 
 func InitSrvConn() {
+	conn, err := grpc.Dial(fmt.Sprintf("consul://%s:%d/%s?wait=14s", global.ServerConfig.ConsulConfig.Host, global.ServerConfig.ConsulConfig.Port, global.ServerConfig.UserSrvConfig.Name),
+		grpc.WithInsecure(),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+	)
+	if err != nil {
+		global.GetSugar().Fatal("连接 [user_srv] 失败", err.Error())
+	}
+
+	userSrvClient := proto.NewUserClient(conn)
+	global.UserSrvClient = userSrvClient
+}
+
+func InitSrvConn2() {
 	// 服务发现-1.初始化配置
 	userSrvHost := ""
 	userSrvPort := 0
