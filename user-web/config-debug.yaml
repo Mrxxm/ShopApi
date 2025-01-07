@@ -1,14 +1,8 @@
-name: 'user-web'
-port: 8022
-
-user_srv:
+nacos:
   host: '192.168.15.21'
-  port: 50051
-  name: 'user-srv'
-
-jwt:
-  signing_key: '*n*cxZhL07yss&TphhCg'
-
-consul:
-  host: '192.168.15.21'
-  port: 8500
+  port: 8848
+  namespace: 'f26b61d5-6074-44a2-8892-0c0d7e14db15'
+  user: 'nacos'
+  password: 'nacos'
+  dataid: 'user-web.json'
+  group: 'dev'
