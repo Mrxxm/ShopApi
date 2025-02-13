@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"shop_api/goods-web/global"
 	"shop_api/goods-web/initialize"
 	"shop_api/goods-web/utils"
+	"shop_api/goods-web/utils/register/consul"
 )
 
 func main() {
@@ -38,7 +40,12 @@ func main() {
 
 	// 6.注册验证器
 
-	// 7.启动服务
+	// 7.注册consul服务
+	serviceID := fmt.Sprintf("%s", uuid.NewV4()) // 服务id
+	register_client := consul.NewRegistryClient(global.ServerConfig.ConsulConfig.Host, global.ServerConfig.ConsulConfig.Port)
+	_ = register_client.Register(global.ServerConfig.Host, global.ServerConfig.Port, global.ServerConfig.Name, global.ServerConfig.Tags, serviceID)
+
+	// 8.启动服务
 	if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil {
 		zap.S().Panic("启动服务器失败:", err.Error())
 	}
