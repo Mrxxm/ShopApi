@@ -16,6 +16,9 @@ import (
 
 func main() {
 	// 1.初始化日志
+	logger, _ := zap.NewDevelopment() // 默认包含Debug级别
+	defer logger.Sync()
+	zap.ReplaceGlobals(logger)
 
 	// 2.读取配置文件
 	initialize.InitConfig()

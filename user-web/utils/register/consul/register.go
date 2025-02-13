@@ -51,7 +51,7 @@ func (r *Registry) Register(address string, port int, name string, tags []string
 	}
 	// 3.注册服务&生成注册对象&生成检查对象
 	check := &api.AgentServiceCheck{
-		HTTP:                           "http://192.168.15.21:8023/health",
+		HTTP:                           "http://192.168.15.21:8022/health",
 		Timeout:                        "5s", // 超时时间
 		Interval:                       "5s", // 健康检查间隔
 		DeregisterCriticalServiceAfter: "5s", // 多久后注销服务

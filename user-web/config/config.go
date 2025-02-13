@@ -6,6 +6,8 @@ type ServerConfig struct {
 	ConsulConfig  ConsulConfig  `mapstructure:"consul" json:"consul"`
 	Name          string        `mapstructure:"name" json:"name"`
 	Port          int           `mapstructure:"port" json:"port"`
+	Host          string        `mapstructure:"host" json:"host"`
+	Tags          []string      `mapstructure:"tags" json:"tags"`
 }
 
 type UserSrvConfig struct {
