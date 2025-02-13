@@ -23,7 +23,20 @@ func NewRegistryClient(host string, port int) RegistryClient {
 }
 
 func (r *Registry) DeRegister(serviceId string) error {
-	return nil
+
+	// 1.初始化配置
+	cfg := api.DefaultConfig()
+	cfg.Address = fmt.Sprintf("%s:%v", r.Host, r.Port)
+
+	// 2.创建一个consul客户端
+	client, err := api.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	err = client.Agent().ServiceDeregister(serviceId)
+
+	return err
 }
 
 func (r *Registry) Register(address string, port int, name string, tags []string, id string) error {
