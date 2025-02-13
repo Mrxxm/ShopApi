@@ -10,10 +10,10 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
-	"shop_api/goods-web/utils/register/consul"
 	"shop_api/user-web/global"
 	"shop_api/user-web/initialize"
 	"shop_api/user-web/utils"
+	"shop_api/user-web/utils/register/consul"
 	myvalidator "shop_api/user-web/validator"
 	"syscall"
 )
