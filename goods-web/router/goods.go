@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"shop_api/goods-web/api/goods"
+	"shop_api/goods-web/middlewares"
 )
 
 func InitGoodsRouter(Router *gin.RouterGroup) {
@@ -12,6 +13,11 @@ func InitGoodsRouter(Router *gin.RouterGroup) {
 	zap.S().Debug("初始化商品相关url")
 	{
 		GoodsRouter.GET("list", goods.GetGoodsList)
+	}
+
+	GoodsRouter.Use(middlewares.JWTAuth(), middlewares.IsAdminAuth())
+	{
+		GoodsRouter.POST("new", goods.New)
 	}
 
 }

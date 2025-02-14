@@ -5,8 +5,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"shop_api/user-web/global"
-	"shop_api/user-web/models"
+	"shop_api/goods-web/global"
+	"shop_api/goods-web/models"
 	"time"
 )
 
@@ -22,8 +22,10 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 		j := NewJWT()
+
 		// parseToken 解析token包含的信息
 		claims, err := j.ParseToken(token)
+
 		if err != nil {
 			if err == TokenExpired {
 				if err == TokenExpired {
@@ -73,6 +75,7 @@ func (j *JWT) ParseToken(tokenString string) (*models.CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &models.CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil
 	})
+
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
