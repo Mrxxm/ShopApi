@@ -18,6 +18,8 @@ func InitGoodsRouter(Router *gin.RouterGroup) {
 	GoodsRouter.Use(middlewares.JWTAuth(), middlewares.IsAdminAuth())
 	{
 		GoodsRouter.POST("new", goods.New)
+		GoodsRouter.GET("/:id", goods.Detail)
+		GoodsRouter.DELETE("/:id", goods.Delete)
 	}
 
 }
