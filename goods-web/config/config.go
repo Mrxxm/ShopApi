@@ -4,6 +4,7 @@ type ServerConfig struct {
 	GoodsSrvConfig GoodsSrvConfig `mapstructure:"goods_srv" json:"goods_srv"`
 	JWTConfig      JWTConfig      `mapstructure:"jwt" json:"jwt"`
 	ConsulConfig   ConsulConfig   `mapstructure:"consul" json:"consul"`
+	JaegerInfo     JaegerConfig   `mapstructure:"consul" json:"jaeger"`
 	Name           string         `mapstructure:"name" json:"name"`
 	Port           int            `mapstructure:"port" json:"port"`
 	Host           string         `mapstructure:"host" json:"host"`
@@ -11,6 +12,12 @@ type ServerConfig struct {
 }
 
 type GoodsSrvConfig struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+	Name string `mapstructure:"name" json:"name"`
+}
+
+type JaegerConfig struct {
 	Host string `mapstructure:"host" json:"host"`
 	Port int    `mapstructure:"port" json:"port"`
 	Name string `mapstructure:"name" json:"name"`
