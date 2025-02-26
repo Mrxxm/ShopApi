@@ -1,12 +1,12 @@
 {
-  "name": "user-api",
-  "port": 8022,
+  "name": "goods-api", 
+  "port": 8023, 
   "host": "192.168.15.21",
-  "tags": ["user-api"],
-  "user_srv": {
-    "name": "user-srv"
+  "tags": ["goods-api"],
+  "goods_srv": {
+    "name": "goods-srv"
   },
-  "jwt": {
+    "jwt": {
     "signing_key": "*n*cxZhL07yss&TphhCg"
   },
   "consul": {
