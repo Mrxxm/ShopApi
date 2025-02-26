@@ -20,6 +20,9 @@ func Routers() *gin.Engine {
 	ApiV1Group := r.Group("/g/v1")
 	// 5.初始化路由信息
 	router.InitGoodsRouter(ApiV1Group)
+	router.InitCategoryRouter(ApiV1Group)
+	router.InitBrandRouter(ApiV1Group)
+	router.InitBannerRouter(ApiV1Group)
 	// 6.返回路由
 	return r
 }
