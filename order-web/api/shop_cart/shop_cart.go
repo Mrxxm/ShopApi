@@ -178,24 +178,24 @@ func Update(ctx *gin.Context) {
 }
 
 func Delete(ctx *gin.Context) {
-	//id := ctx.Param("id")
-	//i, err := strconv.Atoi(id)
-	//if err != nil {
-	//	ctx.JSON(http.StatusNotFound, gin.H{
-	//		"msg": "url格式出错",
-	//	})
-	//	return
-	//}
-	//
-	//userId, _ := ctx.Get("userId")
-	//_, err = global.OrderSrvClient.DeleteCartItem(context.Background(), &proto.CartItemRequest{
-	//	UserId:  int32(userId.(uint)),
-	//	GoodsId: int32(i),
-	//})
-	//if err != nil {
-	//	zap.S().Errorw("删除购物车记录失败")
-	//	api.HandleGrpcErrorToHttp(err, ctx)
-	//	return
-	//}
+	id := ctx.Param("id")
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"msg": "url格式出错",
+		})
+		return
+	}
+
+	userId, _ := ctx.Get("userId")
+	_, err = global.OrderSrvClient.DeleteCartItem(context.Background(), &proto.CartItemRequest{
+		UserId:  int32(userId.(uint)),
+		GoodsId: int32(i),
+	})
+	if err != nil {
+		zap.S().Errorw("删除购物车记录失败")
+		api.HandleGrpcErrorToHttp(err, ctx)
+		return
+	}
 	ctx.Status(http.StatusOK)
 }
