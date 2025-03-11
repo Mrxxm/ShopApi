@@ -111,7 +111,7 @@ func New(ctx *gin.Context) {
 		})
 		return
 	}
-	err = client.LoadAliPayPublicKey((global.ServerConfig.AliPayInfo.AliPublicKey))
+	err = client.LoadAliPayPublicKey(global.ServerConfig.AliPayInfo.AliPublicKey)
 	if err != nil {
 		zap.S().Errorw("加载支付宝的公钥失败")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -205,7 +205,7 @@ func Detail(ctx *gin.Context) {
 		})
 		return
 	}
-	err = client.LoadAliPayPublicKey((global.ServerConfig.AliPayInfo.AliPublicKey))
+	err = client.LoadAliPayPublicKey(global.ServerConfig.AliPayInfo.AliPublicKey)
 	if err != nil {
 		zap.S().Errorw("加载支付宝的公钥失败")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
