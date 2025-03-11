@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin/binding"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
 	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -11,6 +14,7 @@ import (
 	"shop_api/order-web/initialize"
 	"shop_api/order-web/utils"
 	"shop_api/order-web/utils/register/consul"
+	myvalidator "shop_api/order-web/validator"
 	"syscall"
 )
 
@@ -45,6 +49,15 @@ func main() {
 	}
 
 	// 6.注册验证器
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		_ = v.RegisterValidation("mobile", myvalidator.ValidateMobile)
+		_ = v.RegisterTranslation("mobile", global.Trans, func(ut ut.Translator) error {
+			return ut.Add("mobile", "{0} 非法的手机号码!", true) // see universal-translator for details
+		}, func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("mobile", fe.Field())
+			return t
+		})
+	}
 
 	// 7.注册consul服务
 	serviceID := fmt.Sprintf("%s", uuid.NewV4()) // 服务id
