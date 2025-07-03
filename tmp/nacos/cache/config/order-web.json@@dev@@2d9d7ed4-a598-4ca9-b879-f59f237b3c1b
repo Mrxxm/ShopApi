@@ -1,0 +1,29 @@
+{
+  "name": "order-api", 
+  "port": 8024, 
+  "host": "192.168.15.21",
+  "tags": ["order-api"],
+  "order_srv": {
+    "name": "order-srv"
+  },
+    "jwt": {
+    "signing_key": "*n*cxZhL07yss&TphhCg"
+  },
+  "consul": {
+    "host": "192.168.15.21",
+    "port": 8500
+  },
+  "goods_srv": {
+    "name": "goods-srv"
+  },
+  "inventory_srv": {
+    "name": "inventory-srv"
+  },
+  "alipay": {
+    "appid": "9021000146606463",
+    "private_key": "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC6ZSnhnE6nT70JNCgla8rQRQstHR4fZMZRIpNicn9mHIjPbN6OXQ81Yv5gS7LbGbqSta2+E+QEkq3R3RD5oKsrx674XuwVqEpHniohfztmOcihhO4KMgTrOKZ3ZF5uzLmzl8DLuyBWoqTBWFy0kBuZ7pHKKG1vcC8UGlPZ3Z3U+WkEiCXE4cSKD8lrt1NCDRhS6z53LmphwSLwM2qNsCTbM4O6YLBkhw33uCUmR8a7xfIQlk1aTN3yn7CS2baqkE8lYdukALJ3DsRBQN8PYxZdKi6QS2iJjop0ZsSJe2Ti6ubSY+XSv5j1BTHXXAkdZo3vt5BX2ne71EKI/qD+PitzAgMBAAECggEAaer8npiM1WRpXiaGPaWALVNeo3ctW9ePHiHQsJuxq1vBnmUWHr3g24xyUlQRwZFgROf6X827v6F+JohBkihrvEgPNFH0Q+ZKt2G4PSqonVFuoeIAxkhgJS4e4i9lvf6V8+jjBKJEIRbxGnFU1MIi/RjlPYQ1k6KjDgBb76yQeKl9UFJ6t+Bp/6UASB8kkZI5c4T57hmg4hVoXTWmTAdnHg4YM5gQ6AHMLWcBmahFSvjYTs1gvqeZBzBdxzOZdodxYR6xPpqrefh2Z0jzNJ7D8bI5S/wQcg3jFTwM1VWlHsU5Gok5iKTiqCKvyowdOlUaVR3bfEFT3GOl+l4VAqzbqQKBgQDhp/wYfnc4C90Q/eD+LQM1Cu4XZFAOLGN/kctHQ72nodk1/vk6DfFXWKl0HyL0K25TxyaYOyLjhNZB3nsj4jwz4G/cbHagpbQ30ZT1I/R3z3KDthFMkX4CW3grW1vogfy2iGIH/DqeujVvXuNO/ZcVlWLKJzqCSfB+8RhPWk6v/wKBgQDTdacivZXgnIiiTOL0lbzeqBtqmQ/R3IW33Py4D7Df26SY/giMKcK0EBEqi2H0Ygl94nM5KrzYtK1b0UCCF1q2lHG8lXYbRa9tjWufler/CTCOXxaE043ABkuZIuMpgEfx+EH5boLBSoJ+qZTEqodEND9BBDEQdJEuswSMfdjEjQKBgByJgfgXBjywQ2TCtpFuX9l1aGbM6NLiCjM33N1GU9W/QhjyBdKxsLO7IrLsvR7j3y/5H4hg8iiTxATQfgIrujFVUNAvZ1Epo4DroErgISqFsZW2kLl+LNFff/L7usPMrIjo9nzMCR3JrrhG57g1mcXA/p1SGLQhZaioFMr0QL9BAoGBANAALexVUmVDdH85ZBG0bLkT4QwFDXOgGIRYQtqGzLQWaJz5XM0KkvPtzgTsX+k0uiNyqWZ1LJd5egEUHwEYGen4sLwQxMFk1X/MmS28GRDPKE0TKaJ0Oj3Fs30pvQtonNxeF/9T/hhFw4D2LFkbaLzlK8c3aU/Habvm6bWMYLpNAoGBAMPGBLFVGEsYTuA1mUZtzE23ynC/CPRVkA252GqVd3hiUPYLjAnKikhzQgov/cFyPN0Jwyt+pByGOh/mzspsb4qfGAF1kcHR0RwgrLWSbrqqc961gXwMocdoZMBoxvkY8nkCZY7HmOnfF0szxFhkumEIwEPyERXqriO4XULpn5/y",
+    "ali_public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkZ5igko7+arohFSDA46gAHgfBbHz+Y6kPS+cxZ3/1z5vn/jOgeoDVvC8hK3rggnSLNdNNgVGMQigDGZ4BuxyWZMRcvW5qkDVFOTPdljBYGWjGSnW2b3PIcLaHtxqeaWPGPDKci5t5N0i4aIIxsFCRZppLtsgoFqePpNr3nDtILdzlN8TuS2gv+4AnoftM156Niczv8wy23oYvXLCXagg4KnuBAE9Cdi3mMAnl8t059suVVg7Ty064qO4kc551ujoTleUVvy6Qt8SByhG7xX9PwkUMB3GA6foS0CzgBDU52MML3i39D6kjJrMeZ6sjZpdudDVglGHobsoa85FQfkWOQIDAQAB",
+    "notify_url": "http://53s3uy.natappfree.cc/o/v1/pay/alipay/notify",
+    "return_url": "http://www.baidu.com"
+  }
+}
